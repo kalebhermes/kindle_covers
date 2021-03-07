@@ -1,5 +1,9 @@
-import 'package:dio/dio.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+
+import 'package:kindle_covers/sizes.dart';
 
 void main() {
   runApp(MyApp());
@@ -68,17 +72,52 @@ class BookCovers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-        physics: AlwaysScrollableScrollPhysics(),
-        itemCount: asins.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5,
-          crossAxisSpacing: 10.0,
-          mainAxisSpacing: 4.0,
-          childAspectRatio: .75,
-        ),
-        itemBuilder: (context, index) {
-          return Image.network(
-              'http://z2-ec2.images-amazon.com/images/P/${asins[index]}.01.MAIN._SCRM_.jpg',
+      physics: AlwaysScrollableScrollPhysics(),
+      itemCount: asins.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _getNumberOfGridColumns(context),
+        crossAxisSpacing: 10.0,
+        mainAxisSpacing: 4.0,
+        childAspectRatio: .75,
+      ),
+      itemBuilder: (context, index) {
+        return Book(
+          url: asins[index],
+        );
+      },
+    );
+  }
+}
+
+class Book extends StatefulWidget {
+  Book({this.url});
+
+  final String url;
+
+  @override
+  _BookState createState() => _BookState();
+}
+
+class _BookState extends State<Book> {
+  var _showDownloadButton = false;
+
+  @override
+  Widget build(BuildContext context) {
+    var _renderUrl =
+        'http://z2-ec2.images-amazon.com/images/P/${widget.url}.jpg';
+    var _fullSizeUrl =
+        'http://z2-ec2.images-amazon.com/images/P/${widget.url}.01.MAIN._SCRM_.jpg';
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onEnter: (PointerEvent details) =>
+          setState(() => _showDownloadButton = true),
+      onHover: (PointerEvent details) =>
+          setState(() => _showDownloadButton = true),
+      onExit: (PointerEvent details) =>
+          setState(() => _showDownloadButton = false),
+      child: Stack(
+        children: [
+          Image.network(_renderUrl,
               // scale: 0.5,
               loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) {
@@ -88,10 +127,25 @@ class BookCovers extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-          });
-        }
-        // children: [...bookUrls.map((url) => Image.network(url, height: 150.0))],
-        );
+          }),
+          if (_showDownloadButton)
+            Positioned(
+              bottom: 0,
+              left: 5,
+              child: SizedBox(
+                height: 50.0,
+                width: 50.0,
+                child: Expanded(
+                  child: ElevatedButton(
+                    child: Icon(Icons.download_outlined),
+                    onPressed: () => downloadFile(_fullSizeUrl),
+                  ),
+                ),
+              ),
+            )
+        ],
+      ),
+    );
   }
 }
 
@@ -117,7 +171,7 @@ class AsinEntryFrom extends StatelessWidget {
             ),
           ),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('Submit'),
           onPressed: () => onSubmit(controller.text),
         ),
@@ -126,9 +180,20 @@ class AsinEntryFrom extends StatelessWidget {
   }
 }
 
-Future<void> downloadFile() async {
-  Dio dio = Dio();
-  await dio.download(
-      'http://s3.cn-north-1.amazonaws.com.cn/sitbweb-cn/content/B07WYSGHC7/images/cover.jpg',
-      '/test.jpeg');
+void downloadFile(String url) {
+  html.AnchorElement anchorElement = new html.AnchorElement(href: url);
+  anchorElement.download;
+  anchorElement.target = '_blank';
+  anchorElement.click();
+  html.document.body.children.remove(anchorElement);
+}
+
+int _getNumberOfGridColumns(BuildContext context) {
+  if (isLargeScreen(context)) {
+    return 5;
+  } else if (isMediumScreen(context)) {
+    return 4;
+  } else {
+    return 3;
+  }
 }
