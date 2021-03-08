@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:kindle_covers/sizes.dart';
+import 'package:kindle_covers/constants.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'Kindle Book Covers'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -33,33 +35,78 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  TextEditingController controller = TextEditingController();
-  bool isTextFieldVisible = true;
-  List<String> asins = [];
+  TextEditingController _controller = TextEditingController();
+  bool _isTextFieldVisible = true;
+  bool _isInfoCardVisible = false;
+  List<String> _asins = [];
 
   void onSubmit(String listOfAsins) async {
     setState(() {
-      asins = listOfAsins.replaceAll(' ', '').split(',');
-      if (asins.length > 0 && asins.elementAt(0) != '') {
-        isTextFieldVisible = false;
+      _asins = listOfAsins.replaceAll(' ', '').split(',');
+      if (_asins.length > 0 && _asins.elementAt(0) != '') {
+        _isTextFieldVisible = false;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var scaffoldKey = GlobalKey<ScaffoldState>();
+
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
+        leading: !_isTextFieldVisible
+            ? IconButton(
+                icon: Icon(Icons.chevron_left),
+                color: Colors.white,
+                onPressed: () => setState(
+                      () => {_isTextFieldVisible = true, _controller.text = ''},
+                    ))
+            : SizedBox.shrink(),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.info_outline_rounded),
+            color: Colors.white,
+            onPressed: () => {
+              // showModalBottomSheet(
+              //     context: context, builder: (context) => InfoSheet())
+            },
+          ),
+        ],
       ),
-      body: SafeArea(
-        minimum: EdgeInsets.all(10.0),
-        child: Center(
-          child: isTextFieldVisible
-              ? AsinEntryFrom(controller: controller, onSubmit: onSubmit)
-              : BookCovers(asins: asins),
-        ),
-      ),
+      body: Center(
+          child: Column(
+        children: [
+          _isTextFieldVisible
+              ? AsinEntryFrom(controller: _controller, onSubmit: onSubmit)
+              : BookCovers(asins: _asins),
+          Flexible(
+            flex: 1,
+            child: Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: SizedBox(
+                height: 50,
+                child: Container(
+                  color: Colors.blue,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '© Kaleb Hermes ${DateTime.now().year}',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      )),
     );
   }
 }
@@ -71,20 +118,27 @@ class BookCovers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      physics: AlwaysScrollableScrollPhysics(),
-      itemCount: asins.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: _getNumberOfGridColumns(context),
-        crossAxisSpacing: 10.0,
-        mainAxisSpacing: 4.0,
-        childAspectRatio: .75,
+    return Flexible(
+      flex: 19,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: AlwaysScrollableScrollPhysics(),
+          itemCount: asins.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _getNumberOfGridColumns(context),
+            crossAxisSpacing: 10.0,
+            mainAxisSpacing: 4.0,
+            childAspectRatio: .75,
+          ),
+          itemBuilder: (context, index) {
+            return Book(
+              url: asins[index],
+            );
+          },
+        ),
       ),
-      itemBuilder: (context, index) {
-        return Book(
-          url: asins[index],
-        );
-      },
     );
   }
 }
@@ -117,17 +171,19 @@ class _BookState extends State<Book> {
           setState(() => _showDownloadButton = false),
       child: Stack(
         children: [
-          Image.network(_renderUrl,
-              // scale: 0.5,
-              loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) {
-              return child;
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }),
+          Center(
+            child: Image.network(_renderUrl,
+                // scale: 0.5,
+                loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) {
+                return child;
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }),
+          ),
           if (_showDownloadButton)
             Positioned(
               bottom: 0,
@@ -135,11 +191,9 @@ class _BookState extends State<Book> {
               child: SizedBox(
                 height: 50.0,
                 width: 50.0,
-                child: Expanded(
-                  child: ElevatedButton(
-                    child: Icon(Icons.download_outlined),
-                    onPressed: () => downloadFile(_fullSizeUrl),
-                  ),
+                child: ElevatedButton(
+                  child: Icon(Icons.download_outlined),
+                  onPressed: () => _addDownloadLink(_fullSizeUrl),
                 ),
               ),
             )
@@ -158,6 +212,8 @@ class AsinEntryFrom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
       children: [
         Container(
           margin: EdgeInsets.all(12),
@@ -171,16 +227,25 @@ class AsinEntryFrom extends StatelessWidget {
             ),
           ),
         ),
-        ElevatedButton(
-          child: Text('Submit'),
-          onPressed: () => onSubmit(controller.text),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            ElevatedButton(
+              child: Text('Submit'),
+              onPressed: () => onSubmit(controller.text),
+            ),
+            ElevatedButton(
+              child: Text('Demo - Most Popular Kindle Books'),
+              onPressed: () => onSubmit(topBooks),
+            ),
+          ],
         ),
       ],
     );
   }
 }
 
-void downloadFile(String url) {
+void _addDownloadLink(String url) {
   html.AnchorElement anchorElement = new html.AnchorElement(href: url);
   anchorElement.download;
   anchorElement.target = '_blank';
@@ -195,5 +260,23 @@ int _getNumberOfGridColumns(BuildContext context) {
     return 4;
   } else {
     return 3;
+  }
+}
+
+class InfoSheet extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          Container(
+            color: Colors.blue,
+            child: Text('Information',
+                style: TextStyle(color: Colors.white, fontSize: 40.0)),
+          ),
+        ],
+      ),
+    );
   }
 }
