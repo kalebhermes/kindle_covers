@@ -134,21 +134,23 @@ class BookCovers extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: GridView.builder(
-          shrinkWrap: true,
-          physics: AlwaysScrollableScrollPhysics(),
-          itemCount: asins.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: _getNumberOfGridColumns(context),
-            crossAxisSpacing: 10.0,
-            mainAxisSpacing: 4.0,
-            childAspectRatio: .75,
+        child: Scrollbar(
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: AlwaysScrollableScrollPhysics(),
+            itemCount: asins.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _getNumberOfGridColumns(context),
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 4.0,
+              childAspectRatio: .75,
+            ),
+            itemBuilder: (context, index) {
+              return Book(
+                url: asins[index],
+              );
+            },
           ),
-          itemBuilder: (context, index) {
-            return Book(
-              url: asins[index],
-            );
-          },
         ),
       ),
     );
