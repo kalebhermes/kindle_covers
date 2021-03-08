@@ -77,36 +77,49 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Center(
-          child: Column(
-        children: [
-          _isTextFieldVisible
-              ? AsinEntryFrom(controller: _controller, onSubmit: onSubmit)
-              : BookCovers(asins: _asins),
-          Flexible(
-            flex: 1,
-            child: Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: SizedBox(
-                height: 50,
-                child: Container(
-                  color: Colors.blue,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '© Kaleb Hermes ${DateTime.now().year}',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      )
-                    ],
-                  ),
+        // Having two footers sucks, but because of the nature of the GridView, one needed to be expanded while the other couldn't be
+        child: _isTextFieldVisible
+            ? Column(
+                children: [
+                  AsinEntryFrom(controller: _controller, onSubmit: onSubmit),
+                  Expanded(child: Footer())
+                ],
+              )
+            : Column(children: [
+                BookCovers(asins: _asins),
+                Footer(),
+              ]),
+      ),
+    );
+  }
+}
+
+class Footer extends StatelessWidget {
+  const Footer({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: FractionalOffset.bottomCenter,
+      child: SizedBox(
+        height: 35,
+        child: Container(
+          color: Colors.blue,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '© Kaleb Hermes ${DateTime.now().year}',
+                style: TextStyle(
+                  color: Colors.white,
                 ),
-              ),
-            ),
+              )
+            ],
           ),
-        ],
-      )),
+        ),
+      ),
     );
   }
 }
@@ -118,8 +131,7 @@ class BookCovers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      flex: 19,
+    return Expanded(
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: GridView.builder(
@@ -171,6 +183,7 @@ class _BookState extends State<Book> {
           setState(() => _showDownloadButton = false),
       child: Stack(
         children: [
+          Text(widget.url),
           Center(
             child: Image.network(_renderUrl,
                 // scale: 0.5,
@@ -213,7 +226,6 @@ class AsinEntryFrom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
       children: [
         Container(
           margin: EdgeInsets.all(12),
@@ -254,7 +266,9 @@ void _addDownloadLink(String url) {
 }
 
 int _getNumberOfGridColumns(BuildContext context) {
-  if (isLargeScreen(context)) {
+  if (isExtraLargeScreen(context)) {
+    return 7;
+  } else if (isLargeScreen(context)) {
     return 5;
   } else if (isMediumScreen(context)) {
     return 4;
