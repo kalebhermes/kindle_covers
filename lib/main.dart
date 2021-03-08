@@ -183,7 +183,6 @@ class _BookState extends State<Book> {
           setState(() => _showDownloadButton = false),
       child: Stack(
         children: [
-          Text(widget.url),
           Center(
             child: Image.network(_renderUrl,
                 // scale: 0.5,
