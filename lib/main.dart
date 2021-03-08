@@ -104,7 +104,7 @@ class _BookState extends State<Book> {
   @override
   Widget build(BuildContext context) {
     var _renderUrl =
-        'http://z2-ec2.images-amazon.com/images/P/${widget.url}.jpg';
+        'https://images-na.ssl-images-amazon.com/images/P/${widget.url}.jpg';
     var _fullSizeUrl =
         'http://z2-ec2.images-amazon.com/images/P/${widget.url}.01.MAIN._SCRM_.jpg';
     return MouseRegion(
