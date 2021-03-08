@@ -56,42 +56,46 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     var scaffoldKey = GlobalKey<ScaffoldState>();
 
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: AppBar(
-        title: Text(widget.title),
-        leading: !_isTextFieldVisible
-            ? IconButton(
-                icon: Icon(Icons.chevron_left),
-                color: Colors.white,
-                onPressed: () => setState(
-                      () => {_isTextFieldVisible = true, _controller.text = ''},
-                    ))
-            : SizedBox.shrink(),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.info_outline_rounded),
-        //     color: Colors.white,
-        //     onPressed: () => {
-        //       showModalBottomSheet(
-        //           context: context, builder: (context) => InfoSheet())
-        //     },
-        //   ),
-        // ],
-      ),
-      body: Center(
-        // Having two footers sucks, but because of the nature of the GridView, one needed to be expanded while the other couldn't be
-        child: _isTextFieldVisible
-            ? Column(
-                children: [
-                  AsinEntryFrom(controller: _controller, onSubmit: onSubmit),
-                  Expanded(child: Footer())
-                ],
-              )
-            : Column(children: [
-                BookCovers(asins: _asins),
-                Footer(),
-              ]),
+    return SafeArea(
+      bottom: true,
+      child: Scaffold(
+        key: scaffoldKey,
+        appBar: AppBar(
+          title: Text(widget.title),
+          leading: !_isTextFieldVisible
+              ? IconButton(
+                  icon: Icon(Icons.chevron_left),
+                  color: Colors.white,
+                  onPressed: () => setState(
+                        () =>
+                            {_isTextFieldVisible = true, _controller.text = ''},
+                      ))
+              : SizedBox.shrink(),
+          // actions: [
+          //   IconButton(
+          //     icon: Icon(Icons.info_outline_rounded),
+          //     color: Colors.white,
+          //     onPressed: () => {
+          //       showModalBottomSheet(
+          //           context: context, builder: (context) => InfoSheet())
+          //     },
+          //   ),
+          // ],
+        ),
+        body: Center(
+          // Having two footers sucks, but because of the nature of the GridView, one needed to be expanded while the other couldn't be
+          child: _isTextFieldVisible
+              ? Column(
+                  children: [
+                    AsinEntryFrom(controller: _controller, onSubmit: onSubmit),
+                    Expanded(child: Footer())
+                  ],
+                )
+              : Column(children: [
+                  BookCovers(asins: _asins),
+                  Footer(),
+                ]),
+        ),
       ),
     );
   }
@@ -268,7 +272,7 @@ class AsinEntryFrom extends StatelessWidget {
           margin: EdgeInsets.all(12),
           child: TextField(
             controller: controller,
-            maxLines: 25,
+            maxLines: 15,
             decoration: InputDecoration(
               hintText: "Enter a comma seperated list of ASIN",
               border: OutlineInputBorder(
