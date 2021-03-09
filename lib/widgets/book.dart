@@ -21,19 +21,50 @@ class _BookState extends State<Book> {
         'https://images-na.ssl-images-amazon.com/images/P/${widget.url}.jpg';
     var _fullSizeUrl =
         'http://z2-ec2.images-amazon.com/images/P/${widget.url}.01.MAIN._SCRM_.jpg';
-    return MouseRegion(
-      cursor: SystemMouseCursors.basic,
-      onEnter: (PointerEvent details) =>
-          setState(() => _showDownloadButton = true),
-      onHover: (PointerEvent details) =>
-          setState(() => _showDownloadButton = true),
-      onExit: (PointerEvent details) =>
-          setState(() => _showDownloadButton = false),
-      child: Stack(
-        children: [
-          Center(
+    return DesktopHoverWrapper(
+      onEnter: () => setState(() => _showDownloadButton = true),
+      onHover: () => setState(() => _showDownloadButton = true),
+      onExit: () => setState(() => _showDownloadButton = false),
+      child: BookStack(
+        renderUrl: _renderUrl,
+        fullSizeUrl: _fullSizeUrl,
+        showDownloadButton: _showDownloadButton,
+      ),
+    );
+  }
+}
+
+void _addDownloadLink(String url) {
+  html.AnchorElement anchorElement = new html.AnchorElement(href: url);
+  anchorElement.download;
+  anchorElement.target = '_blank';
+  anchorElement.click();
+  html.document.body.children.remove(anchorElement);
+}
+
+class BookStack extends StatelessWidget {
+  final String renderUrl;
+  final String fullSizeUrl;
+  final bool showDownloadButton;
+
+  BookStack({this.renderUrl, this.fullSizeUrl, this.showDownloadButton});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Center(
+          child: Container(
+            decoration: BoxDecoration(boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              ),
+            ]),
             child: Image.network(
-              _renderUrl,
+              renderUrl,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) {
                   return child;
@@ -54,29 +85,40 @@ class _BookState extends State<Book> {
               },
             ),
           ),
-          if (_showDownloadButton)
-            Positioned(
-              bottom: 0,
-              left: 5,
-              child: SizedBox(
-                height: 50.0,
-                width: 50.0,
-                child: ElevatedButton(
-                  child: Icon(Icons.download_rounded),
-                  onPressed: () => _addDownloadLink(_fullSizeUrl),
-                ),
+        ),
+        if (showDownloadButton)
+          Positioned(
+            bottom: 5,
+            left: 5,
+            child: SizedBox(
+              height: 50.0,
+              width: 50.0,
+              child: ElevatedButton(
+                child: Icon(Icons.download_rounded),
+                onPressed: () => _addDownloadLink(fullSizeUrl),
               ),
-            )
-        ],
-      ),
+            ),
+          )
+      ],
     );
   }
 }
 
-void _addDownloadLink(String url) {
-  html.AnchorElement anchorElement = new html.AnchorElement(href: url);
-  anchorElement.download;
-  anchorElement.target = '_blank';
-  anchorElement.click();
-  html.document.body.children.remove(anchorElement);
+class DesktopHoverWrapper extends StatelessWidget {
+  final Widget child;
+  final Function onEnter;
+  final Function onHover;
+  final Function onExit;
+
+  DesktopHoverWrapper({this.child, this.onEnter, this.onHover, this.onExit});
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+        cursor: SystemMouseCursors.basic,
+        onEnter: (PointerEvent details) => onEnter(),
+        onHover: (PointerEvent details) => onHover(),
+        onExit: (PointerEvent details) => onExit(),
+        child: child);
+  }
 }

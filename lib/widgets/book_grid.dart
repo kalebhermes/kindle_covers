@@ -15,13 +15,14 @@ class BookGrid extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: Scrollbar(
           child: GridView.builder(
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
             shrinkWrap: true,
             physics: AlwaysScrollableScrollPhysics(),
             itemCount: asins.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: _getNumberOfGridColumns(context),
               crossAxisSpacing: 10.0,
-              mainAxisSpacing: 4.0,
+              mainAxisSpacing: 10.0,
               childAspectRatio: .75,
             ),
             itemBuilder: (context, index) {
