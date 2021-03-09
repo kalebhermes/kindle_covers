@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void onSubmit(String listOfAsins) async {
     setState(() {
       _asins = listOfAsins.replaceAll(' ', '').split(',');
+      if (_asins.last == '') _asins.removeLast();
       if (_asins.length > 0 && _asins.elementAt(0) != '') {
         _isTextFieldVisible = false;
       }
@@ -351,13 +352,28 @@ class InfoSheet extends StatelessWidget {
   }
 }
 
-TextSpan _buildTextSpan(String text, String url) {
+MouseRegionTextSpan _buildTextSpan(String text, String url) {
   void _launchURL(String url) async =>
       await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
 
-  return TextSpan(
-    text: text,
-    style: TextStyle(color: Colors.lightBlue),
-    recognizer: TapGestureRecognizer()..onTap = () => _launchURL(url),
+  return MouseRegionTextSpan(
+    textSpan: TextSpan(
+      text: text,
+      style: TextStyle(color: Colors.lightBlue),
+      recognizer: TapGestureRecognizer()..onTap = () => _launchURL(url),
+    ),
   );
+}
+
+class MouseRegionTextSpan extends WidgetSpan {
+  MouseRegionTextSpan({
+    @required InlineSpan textSpan,
+  }) : super(
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: Text.rich(
+              textSpan,
+            ),
+          ),
+        );
 }
