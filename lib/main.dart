@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'widgets/book_grid.dart';
-import 'widgets/bulk_download_info_sheet.dart';
+import 'widgets/download_info_dialog.dart';
 import 'widgets/footer.dart';
 import 'widgets/asin_entry_form.dart';
 
@@ -36,7 +36,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController _controller = TextEditingController();
   bool _isTextFieldVisible = true;
-  bool _isInfoCardVisible = false;
   List<String> _asins = [];
 
   void onSubmit(String listOfAsins) async {
@@ -70,19 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
               : SizedBox.shrink(),
           actions: !_isTextFieldVisible
               ? [
-                  IconButton(
-                    icon: Icon(Icons.download_rounded),
-                    color: Colors.white,
-                    onPressed: () => {
-                      showModalBottomSheet(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0)),
-                          context: context,
-                          builder: (context) => BulkDownloadInfoSheet(
-                                urls: _asins,
-                              ))
-                    },
-                  ),
+                  DownloadInfoDialog(asins: _asins),
                 ]
               : [],
         ),
