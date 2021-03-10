@@ -1,5 +1,6 @@
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -14,6 +15,8 @@ class Book extends StatefulWidget {
 
 class _BookState extends State<Book> {
   var _showDownloadButton = false;
+  var _isMobile = (defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.android);
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +24,24 @@ class _BookState extends State<Book> {
         'https://images-na.ssl-images-amazon.com/images/P/${widget.url}.jpg';
     var _fullSizeUrl =
         'http://z2-ec2.images-amazon.com/images/P/${widget.url}.01.MAIN._SCRM_.jpg';
-    return DesktopHoverWrapper(
-      onEnter: () => setState(() => _showDownloadButton = true),
-      onHover: () => setState(() => _showDownloadButton = true),
-      onExit: () => setState(() => _showDownloadButton = false),
-      child: BookStack(
-        renderUrl: _renderUrl,
-        fullSizeUrl: _fullSizeUrl,
-        showDownloadButton: _showDownloadButton,
-      ),
+
+    var bookStack = BookStack(
+      renderUrl: _renderUrl,
+      fullSizeUrl: _fullSizeUrl,
+      showDownloadButton: _showDownloadButton,
     );
+    return _isMobile
+        ? MobileHoverWrapper(
+            onTap: () =>
+                setState(() => _showDownloadButton = !_showDownloadButton),
+            child: bookStack,
+          )
+        : DesktopHoverWrapper(
+            onEnter: () => setState(() => _showDownloadButton = true),
+            onHover: () => setState(() => _showDownloadButton = true),
+            onExit: () => setState(() => _showDownloadButton = false),
+            child: bookStack,
+          );
   }
 }
 
@@ -55,14 +66,16 @@ class BookStack extends StatelessWidget {
       children: [
         Center(
           child: Container(
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3),
-              ),
-            ]),
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.4),
+                  spreadRadius: 7,
+                  blurRadius: 15,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
             child: Image.network(
               renderUrl,
               loadingBuilder: (context, child, loadingProgress) {
@@ -120,5 +133,20 @@ class DesktopHoverWrapper extends StatelessWidget {
         onHover: (PointerEvent details) => onHover(),
         onExit: (PointerEvent details) => onExit(),
         child: child);
+  }
+}
+
+class MobileHoverWrapper extends StatelessWidget {
+  final Widget child;
+  final Function onTap;
+
+  MobileHoverWrapper({this.child, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => onTap(),
+      child: child,
+    );
   }
 }

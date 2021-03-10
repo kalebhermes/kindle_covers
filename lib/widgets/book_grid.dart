@@ -21,8 +21,8 @@ class BookGrid extends StatelessWidget {
             itemCount: asins.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: _getNumberOfGridColumns(context),
-              crossAxisSpacing: 10.0,
-              mainAxisSpacing: 10.0,
+              crossAxisSpacing: 15.0,
+              mainAxisSpacing: 25.0,
               childAspectRatio: .75,
             ),
             itemBuilder: (context, index) {
