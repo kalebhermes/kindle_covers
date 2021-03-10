@@ -17,7 +17,7 @@ class AsinEntryFrom extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
+          padding: const EdgeInsets.all(10.0),
           child: RichText(
             text: TextSpan(
               style: TextStyle(color: Colors.black),
@@ -39,8 +39,24 @@ class AsinEntryFrom extends StatelessWidget {
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 10.0),
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Note: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                    text:
+                        'Some more obscure books might render with a solid white cover. This means Amazon doesn\'t have an image in the proper size.'),
+              ],
+            ),
+          ),
+        ),
         Container(
-          margin: EdgeInsets.all(12),
+          margin: EdgeInsets.fromLTRB(10.0, 0, 10.0, 10.0),
           child: TextField(
             controller: controller,
             maxLines: 15,
