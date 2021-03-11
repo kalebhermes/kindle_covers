@@ -11,26 +11,23 @@ class BookGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Scrollbar(
-          child: GridView.builder(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-            shrinkWrap: true,
-            physics: AlwaysScrollableScrollPhysics(),
-            itemCount: asins.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _getNumberOfGridColumns(context),
-              crossAxisSpacing: 15.0,
-              mainAxisSpacing: 25.0,
-              childAspectRatio: .75,
-            ),
-            itemBuilder: (context, index) {
-              return Book(
-                url: asins[index],
-              );
-            },
+      child: Scrollbar(
+        child: GridView.builder(
+          padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 20.0),
+          shrinkWrap: true,
+          physics: AlwaysScrollableScrollPhysics(),
+          itemCount: asins.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _getNumberOfGridColumns(context),
+            crossAxisSpacing: 15.0,
+            mainAxisSpacing: 25.0,
+            childAspectRatio: .75,
           ),
+          itemBuilder: (context, index) {
+            return Book(
+              url: asins[index],
+            );
+          },
         ),
       ),
     );

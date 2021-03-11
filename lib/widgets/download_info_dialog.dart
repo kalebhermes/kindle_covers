@@ -31,16 +31,16 @@ done''',
         await showDialog(
           context: context,
           builder: (context) => SimpleDialog(
-            titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 12.0),
-            contentPadding: EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 24.0),
+            titlePadding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 12.0),
+            contentPadding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 24.0),
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                    flex: 9,
+                    flex: 8,
                     child: Text('Download High Resolution Book Covers')),
                 Flexible(
-                  flex: 1,
+                  flex: 2,
                   child: IconButton(
                     color: Colors.black,
                     icon: Icon(Icons.close_rounded),
@@ -52,6 +52,7 @@ done''',
             children: [
               RichText(
                 text: TextSpan(
+                  style: TextStyle(color: Colors.black),
                   children: [
                     TextSpan(
                         text:
@@ -111,6 +112,7 @@ class CodeSpan extends TextSpan {
           style: GoogleFonts.getFont(
             'Source Code Pro',
             backgroundColor: Colors.grey[300],
+            color: Colors.black,
           ),
         );
 }

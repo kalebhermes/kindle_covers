@@ -43,6 +43,7 @@ class AsinEntryFrom extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 10.0),
           child: RichText(
             text: TextSpan(
+              style: TextStyle(color: Colors.black),
               children: [
                 TextSpan(
                   text: 'Note: ',
