@@ -36,12 +36,12 @@ class BookGrid extends StatelessWidget {
 
 int _getNumberOfGridColumns(BuildContext context) {
   if (isExtraLargeScreen(context)) {
-    return 7;
+    return 9;
   } else if (isLargeScreen(context)) {
-    return 5;
+    return 7;
   } else if (isMediumScreen(context)) {
-    return 4;
+    return 5;
   } else {
-    return 3;
+    return 4;
   }
 }
