@@ -6,7 +6,7 @@ import 'book.dart';
 class BookGrid extends StatelessWidget {
   final List<String> asins;
 
-  BookGrid({this.asins});
+  BookGrid({required this.asins});
 
   @override
   Widget build(BuildContext context) {

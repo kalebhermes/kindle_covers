@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
@@ -9,7 +8,10 @@ class AsinEntryFrom extends StatelessWidget {
   final TextEditingController controller;
   final Function onSubmit;
 
-  AsinEntryFrom({this.controller, this.onSubmit});
+  AsinEntryFrom({
+    required this.controller,
+    required this.onSubmit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +106,7 @@ MouseRegionTextSpan _buildTextSpan(String text, String url) {
 
 class MouseRegionTextSpan extends WidgetSpan {
   MouseRegionTextSpan({
-    @required InlineSpan textSpan,
+    required InlineSpan textSpan,
   }) : super(
           child: MouseRegion(
             cursor: SystemMouseCursors.click,

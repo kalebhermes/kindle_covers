@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 class DownloadInfoDialog extends StatelessWidget {
   final List<String> asins;
 
-  DownloadInfoDialog({this.asins});
+  DownloadInfoDialog({required this.asins});
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +106,7 @@ done''',
 
 class CodeSpan extends TextSpan {
   final String text;
-  CodeSpan({this.text})
+  CodeSpan({required this.text})
       : super(
           text: text,
           style: GoogleFonts.getFont(

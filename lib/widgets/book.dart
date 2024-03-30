@@ -2,10 +2,9 @@
 import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class Book extends StatefulWidget {
-  Book({this.url});
+  Book({required this.url});
 
   final String url;
 
@@ -50,7 +49,7 @@ void _addDownloadLink(String url) {
   anchorElement.download;
   anchorElement.target = '_blank';
   anchorElement.click();
-  html.document.body.children.remove(anchorElement);
+  html.document.body?.children.remove(anchorElement);
 }
 
 class BookStack extends StatelessWidget {
@@ -58,7 +57,11 @@ class BookStack extends StatelessWidget {
   final String fullSizeUrl;
   final bool showDownloadButton;
 
-  BookStack({this.renderUrl, this.fullSizeUrl, this.showDownloadButton});
+  BookStack({
+    required this.renderUrl,
+    required this.fullSizeUrl,
+    required this.showDownloadButton,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +126,12 @@ class DesktopHoverWrapper extends StatelessWidget {
   final Function onHover;
   final Function onExit;
 
-  DesktopHoverWrapper({this.child, this.onEnter, this.onHover, this.onExit});
+  DesktopHoverWrapper({
+    required this.child,
+    required this.onEnter,
+    required this.onHover,
+    required this.onExit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +148,7 @@ class MobileHoverWrapper extends StatelessWidget {
   final Widget child;
   final Function onTap;
 
-  MobileHoverWrapper({this.child, this.onTap});
+  MobileHoverWrapper({required this.child, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
